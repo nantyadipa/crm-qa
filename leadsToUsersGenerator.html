@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JSON User Data Generator</title>
+</head>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+
+        margin: 0;
+        background-color:
+            #f0f0f0;
+        text-align: center;
+    }
+
+    .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        /* Ensure padding and border are included in the total width */
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    #qrcode {
+        display: flex;
+        /* Menggunakan flexbox untuk mengatur posisi */
+        justify-content: center;
+        /* Memusatkan konten secara horizontal */
+        align-items: center;
+        /* Memusatkan konten secara vertikal */
+        margin: 0 auto;
+    }
+
+    #generatedHref {
+        display: block;
+        margin-top: 15px;
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            padding: 20px;
+        }
+
+        #qrcode {
+            width: 200px;
+            height: 200px;
+        }
+
+        input[type="text"],
+        button {
+            width: 90%;
+        }
+    }
+</style>
+
+<body>
+    <h1>JSON User Data Generator</h1>
+
+    <label for="numUsers">Users:</label>
+    <input type="number" id="numUsers" value="2"> <br>
+
+    <button onclick="generateTestData()">Generate</button>
+    <button onclick="copyOutput()">Copy</button> <br> <br>
+
+    <pre id="output"></pre>
+
+    <script>
+        function generateRandomHumanName(gender = 'male') {
+            // ... (kode JavaScript Anda yang sudah ada)
+            var firstNameList = {
+                male: ['Aditya', 'Andika', 'Arya', 'Bagus', 'Billy', 'Chandra', 'Dimas', 'Doni', 'Farhan', 'Febrian', 'Gilang', 'Hendra', 'Irfan', 'Kevin', 'Muhammad', 'Pandu', 'Prasetya', 'Raditya', 'Rangga', 'Ricky', 'Riko', 'Satria', 'Tommy', 'Yoga'],
+                female: ['Agnes', 'Ayu', 'Cindy', 'Citra', 'Dea', 'Dinda', 'Dwi', 'Febri', 'Fitri', 'Gita', 'Hana', 'Indah', 'Intan', 'Jessica', 'Jihan', 'Karina', 'Meylinda', 'Nadia', 'Putri', 'Ratih', 'Rina', 'Salsa', 'Siska', 'Tiara', 'Vina', 'Wulan']
+            };
+
+            var middleNameList = {
+                male: ['Dwi', 'Muhammad', 'Nugraha', 'Pratama', 'Putra', 'Ramadhan', 'Saputra', 'Setiawan', 'Tri'],
+                female: ['Ayu', 'Dewi', 'Febrianti', 'Permatasari', 'Putri', 'Puspita', 'Rahmawati', 'Sari', 'Tri']
+            };
+
+            var lastNameList = {
+                male: ['Gunawan', 'Hartono', 'Hidayat', 'Maulana', 'Permana', 'Pratama', 'Putra', 'Ramadhan', 'Saputra', 'Setiawan', 'Sidik', 'Simatupang', 'Subekti', 'Sugiarto', 'Susanto', 'Syahputra', 'Wibowo', 'Wijaya'],
+                female: ['Dewi', 'Lestari', 'Ningsih', 'Permatasari', 'Putri', 'Rahmawati', 'Sari', 'Siagian', 'Sitompul', 'Sulastri', 'Susanti', 'Tambunan', 'Utari', 'Wati', 'Wijaya']
+            };
+
+            var randomFirstName = firstNameList[gender][Math.floor(Math.random() * firstNameList[gender].length)];
+            var randomMiddleName = middleNameList[gender][Math.floor(Math.random() * middleNameList[gender].length)];
+            var randomLastName = lastNameList[gender][Math.floor(Math.random() * lastNameList[gender].length)];
+
+            return randomFirstName + ' ' + randomMiddleName + ' ' + randomLastName;
+        }
+
+        function generateRandomEmail(fullName) {
+            // ... (kode JavaScript Anda yang sudah ada)
+            var firstName = fullName.split(' ')[0].toLowerCase();
+            var lastName = fullName.split(' ')[2].toLowerCase();
+            var randomNumber = Math.floor(Math.random() * 1000);
+            return firstName + '_' + lastName + '_' + randomNumber + '@ruangguru.id';
+        }
+
+        function generateRandomPhoneNumber() {
+            // ... (kode JavaScript Anda yang sudah ada)
+            return "62856" + getRandomDigits(8);
+        }
+
+        function getRandomDigits(length) {
+            var result = '';
+            for (var i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10);
+            }
+            return result;
+        }
+
+        function generateTestData() {
+            var numUsers = parseInt(document.getElementById("numUsers").value);
+            var users = [];
+
+            for (var i = 0; i < numUsers; i++) {
+                var gender = (Math.random() < 0.5) ? 'male' : 'female';
+                var fullName = generateRandomHumanName(gender);
+                var email = generateRandomEmail(fullName);
+                var phoneNumber = generateRandomPhoneNumber();
+
+                users.push({
+                    "cellphone_number": phoneNumber,
+                    "email": email,
+                    "lesson_name": "kelas-i", // Anda bisa mengganti ini jika perlu
+                    "name": fullName,
+                    "password": "crmruangguru", // Anda bisa mengganti ini jika perlu
+                    "role": "student"
+                });
+            }
+
+            var jsonData = { "users": users };
+            document.getElementById("output").textContent = JSON.stringify(jsonData, null, 2);
+        }
+        function copyOutput() {
+            var output = document.getElementById("output");
+            var range = document.createRange();
+            range.selectNode(output);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();
+            alert("Data berhasil disalin!");
+        }
+    </script>
+</body>
+
+</html>

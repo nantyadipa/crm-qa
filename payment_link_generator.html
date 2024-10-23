@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Payment URL Generator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        #urlForm label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #urlForm input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        #urlForm button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #urlForm button:hover {
+            opacity: 0.8;
+        }
+
+        #generatedURL {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            word-break: break-all;
+            /* Untuk memastikan URL panjang ditampilkan dengan benar */
+        }
+
+        .container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Payment URL Generator</h1>
+    <form id="urlForm">
+        <label for="voucher_serial">Voucher Serial:</label><br>
+        <input type="text" id="voucher_serial" name="voucher_serial"><br><br>
+
+        <label for="package_serial">Package Serial:</label><br>
+        <input type="text" id="package_serial" name="package_serial"><br><br>
+
+        <label for="guest_identity">Guest Identity:</label><br>
+        <input type="text" id="guest_identity" name="guest_identity"><br><br>
+
+        <button type="button" onclick="generateURL()">Generate URL</button>
+    </form>
+
+    <h2>Generated URL:</h2>
+    <div class="container">
+        <p id="generatedURL"></p>
+        <button onclick="copyURL()">Copy Link</button>
+    </div>
+
+    <script>
+        // JavaScript code will be added here
+
+        function generateURL() {
+            // Mengambil nilai dari input field
+            var voucher_serial = document.getElementById("voucher_serial").value;
+            var package_serial = document.getElementById("package_serial").value;
+            var guest_identity = document.getElementById("guest_identity").value;
+
+            // Mengonversi "@" menjadi "%40" pada guest_identity
+            guest_identity = guest_identity.replace("@", "%40");
+
+            // Membuat URL
+            var url = "https://payment.sirogu.com/payment-method?tag=&grade=&package_serial=" +
+                package_serial +
+                "&voucher_serial=" +
+                voucher_serial +
+                "&installment_serial=&package_mapping_serial=&coupon_serial=&source=flow&listFormType=&title=&gifted_user_identity=&gifter_user_deeplink=&guest_parent_identity=&flashsale_serial=&schedule_serial=&identifier_type=email_identifier&guest_identity=" +
+                guest_identity +
+                "&parent_identity=&isAssistedInvoiceCreation=true";
+
+            // Membuat elemen <a> (hyperlink)
+            var a = document.createElement('a');
+            a.href = url;
+            a.textContent = url;
+
+            // Menampilkan URL dalam bentuk hyperlink
+            var generatedURL = document.getElementById("generatedURL");
+            generatedURL.innerHTML = ''; // Menghapus konten sebelumnya
+            generatedURL.appendChild(a);
+        }
+        
+
+        function copyURL() {
+            var url = document.getElementById("generatedURL").textContent;
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    alert("URL berhasil disalin!");
+                })
+                .catch(err => {
+                    console.error("Gagal menyalin URL: ", err);
+                });
+        }
+
+    </script>
+</body>
+
+</html>

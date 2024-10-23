@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Konversi Data ke JSON</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 400px;
+      height: 150px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      resize: vertical;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #outputData {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 400px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Konversi Data ke JSON</h1>
+  <textarea id="inputData" rows="5" cols="40" placeholder="Masukkan data di sini..."></textarea>
+  <button onclick="convertData()">Convert</button>
+  <div id="outputData"></div>
+  <button onclick="copyOutput()">Copy Output</button>
+
+  <script>
+    function convertData() {
+      var input = document.getElementById("inputData").value;
+      var dataArray = input.split("\n").map(item => item.trim());
+      var formattedData = dataArray.join(",");
+
+      document.getElementById("outputData").innerText = formattedData;
+    }
+
+    function copyOutput() {
+      var copyText = document.getElementById("outputData");
+      navigator.clipboard.writeText(copyText.innerText);
+      alert("Output telah disalin!"); 
+    }
+  </script>
+
+</body>
+</html>
