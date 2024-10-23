@@ -12,7 +12,7 @@ This repository contains a collection of web tools created by Nantya Dipa, a QA 
 
 ## How to Use
 
-1.  Go to [your-username.github.io](your-username.github.io) (replace `your-username` with your actual GitHub username).
+1.  Go to [nantessa.github.io](nantessa.github.io) .
 2.  Select a tool from the sidebar.
 3.  Use the tool to perform your desired task.
 
@@ -22,4 +22,4 @@ Nantya Dipa is a QA Analyst at CRM Ruangguru, passionate about improving softwar
 
 ## Contact
 
-[Your contact information]
+Discord 
