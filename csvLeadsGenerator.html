@@ -125,6 +125,7 @@
       <input type="number" id="jumlahLeads" min="1" max="500" value="1">
       <button class="button" onclick="generateRandomData()">Generate</button>
       <button id="downloadButton" class="hide" onclick="downloadCSV()">Download as CSV</button>
+      <button onclick="downloadGeneratedCSV()">Download CSV manual</button>
     </div>
     <div class="container">
       <table border="1" id="leadsTable">
@@ -193,8 +194,7 @@
 
     // Java Script Upload Leads Table
     function generateRandomData() {
-
-      var jumlahLeads = document.getElementById("jumlahLeads").value;
+      var jumlahLeads = parseInt(document.getElementById("jumlahLeads").value, 10);
       var tableBody = document.getElementById("dataTableBody");
       var errorMessage = document.querySelector(".section:nth-child(3) .header #errorMessage");
 
@@ -203,43 +203,137 @@
         errorMessage.remove();
       }
 
-      // Check if jumlahLeads is empty or zero
-      if (jumlahLeads === "" || jumlahLeads === "0") {
+      // Validate input
+      if (isNaN(jumlahLeads) || jumlahLeads <= 0) {
         errorMessage = document.createElement("p");
         errorMessage.id = "errorMessage";
-        errorMessage.textContent = jumlahLeads === "" ? "Kasih angka kek, minimal 1 gitu" : "Upin Ipin keselek batu, minimal value adalah 1";
+        errorMessage.textContent = !isNaN(jumlahLeads) ? "Upin Ipin keselek batu, minimal value adalah 1" : "Kasih angka kek, minimal 1 gitu";
         errorMessage.style.color = "red";
 
-        // Append error message below the table section
         var tableSection = document.querySelector(".section:nth-child(3) .header");
         tableSection.appendChild(errorMessage);
 
-        // Hide error message after 3 seconds
         setTimeout(function () {
           errorMessage.remove();
         }, 3000);
 
-        return; // Stop execution if jumlahLeads is empty or zero
+        return;
       }
 
-      tableBody.innerHTML = ''; // Clear existing data
+      tableBody.innerHTML = '';
 
-      for (var i = 1; i <= jumlahLeads; i++) {
+      // Generate data in chunks
+      var chunkSize = 1000;
+      var currentChunk = 0;
+
+      function generateChunk() {
+        var start = currentChunk * chunkSize;
+        var end = start + chunkSize;
+
+        var fragment = document.createDocumentFragment(); // Create a document fragment
+
+        for (var i = start; i < end && i < jumlahLeads; i++) {
+          var fullStudentName = generateRandomHumanName();
+          var fullParentName = generateRandomHumanName();
+          var randomMaleName = generateRandomHumanName();
+          var randomFemaleName = generateRandomHumanName('female');
+          var rowData = [
+            '2807231441',
+            fullStudentName,
+            generateRandomEmail(fullStudentName),
+            generateRandomPhoneNumber().toString(),
+            'Kelas 9',
+            '',
+            randomFemaleName,
+            generateRandomPhoneNumber().toString(),
+            '',
+            'Guru',
+            'Jalan Kraton 66',
+            'Pernah mengikuti Bimbel tapi sudah tidak lagi',
+            'OG',
+            'UGM',
+            'Yes',
+            'UGM',
+            '',
+            '',
+            '',
+            '',
+            'English',
+            'Matematika',
+            '',
+            ''
+          ];
+
+          var row = document.createElement("tr");
+          rowData.forEach(function (cellData, index) {
+            var cell = document.createElement("td");
+            cell.textContent = cellData;
+
+            if (index === 1 || index === 2 || index === 3 || index === 6 || index === 7) {
+              var copyButton = document.createElement("button");
+              copyButton.classList.add("copy-button");
+              copyButton.textContent = "Copy";
+              copyButton.addEventListener("click",
+                function () {
+                  copyToClipboard(cellData, cell);
+                });
+              cell.appendChild(copyButton);
+            }
+
+            row.appendChild(cell);
+          });
+
+          fragment.appendChild(row); // Append the row to the fragment
+        }
+
+        tableBody.appendChild(fragment); // Append the fragment to the table
+
+        currentChunk++;
+
+        if (currentChunk * chunkSize < jumlahLeads) {
+          setTimeout(generateChunk, 0);
+        } else {
+          // Show download button after all chunks are generated
+          var downloadButton = document.getElementById("downloadButton");
+          downloadButton.classList.remove("hide");
+          downloadButton.classList.add("button");
+        }
+      }
+
+      generateChunk(); // Start generating the first chunk
+    }
+
+    function downloadGeneratedCSV() {
+      var jumlahLeads = parseInt(document.getElementById("jumlahLeads").value, 10);
+
+      // Input validation (same as before) ...
+
+      var csvContent = "data:text/csv;charset=utf-8,";
+
+      // Add header row
+      var headerRow = document.getElementById("leadsTable").getElementsByTagName("th");
+      var headerItems = [];
+      for (var j = 0; j < headerRow.length; j++) {
+        headerItems.push(headerRow[j].textContent);
+      }
+      csvContent += headerItems.join(",") + "\n";
+
+      // Generate data
+      for (var i = 0; i < jumlahLeads; i++) {
         var fullStudentName = generateRandomHumanName();
         var fullParentName = generateRandomHumanName();
         var randomMaleName = generateRandomHumanName();
         var randomFemaleName = generateRandomHumanName('female');
         var rowData = [
-
-          '2807231441', // NPSN Sekolah Siswa
+          '2807231441',
           fullStudentName,
           generateRandomEmail(fullStudentName),
           generateRandomPhoneNumber().toString(),
           'Kelas 9',
-          '', // Sub Kelas Siswa
+          '',
           randomFemaleName,
           generateRandomPhoneNumber().toString(),
-          '', // Notes
+          '',
           'Guru',
           'Jalan Kraton 66',
           'Pernah mengikuti Bimbel tapi sudah tidak lagi',
@@ -247,41 +341,29 @@
           'UGM',
           'Yes',
           'UGM',
-          '', // Kendala belajar
-          '', // Solusi belajar
-          '', // Hal yang ingin dikonsultasikan
-          '', // Kegiatan yang ingin diikuti
+          '',
+          '',
+          '',
+          '',
           'English',
           'Matematika',
-          '', // Assign To
-          ''  // Campaign Serial
+          '',
+          ''
         ];
 
-        var row = document.createElement("tr");
-        rowData.forEach(function (cellData, index) {
-          var cell = document.createElement("td");
-          cell.textContent = cellData;
-
-          // Tambahkan tombol copy untuk kolom tertentu
-          if (index === 1 || index === 2 || index === 3 || index === 6 || index === 7) {
-            var copyButton = document.createElement("button");
-            copyButton.classList.add("copy-button");
-            copyButton.textContent = "Copy";
-            copyButton.addEventListener("click", function () {
-              copyToClipboard(cellData, cell);
-            });
-            cell.appendChild(copyButton);
-          }
-
-          row.appendChild(cell);
-        });
-        tableBody.appendChild(row);
-        document.getElementById("downloadButton").classList.remove("hide");
+        csvContent += rowData.join(",") + "\n";
       }
 
-      var downloadButton = document.getElementById("downloadButton");
-      downloadButton.classList.remove("hide");
-      downloadButton.classList.add("button");
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      var currentDate = new Date();
+      var formattedDate = ('0' + currentDate.getDate()).slice(-2) + ('0' + (currentDate.getMonth() + 1)).slice(-2) + currentDate.getFullYear();
+      var formattedTime = ('0' + currentDate.getHours()).slice(-2) + ('0' + currentDate.getMinutes()).slice(-2) + ('0' + currentDate.getSeconds()).slice(-2);
+      var fileName = "leads_" + formattedDate + "_" + formattedTime + ".csv";
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
     }
 
     function generateRandomHumanName(gender = 'male') { // Parameter gender, default 'male'
@@ -313,7 +395,7 @@
       var randomNumber = Math.floor(Math.random() * 1000);
       return firstName + '_' + lastName + '_' + randomNumber + '@yahoo.co.id';
     }
-
+    //add 
     function generateRandomPhoneNumber() {
       return "62856" + getRandomDigits(8);
     }
