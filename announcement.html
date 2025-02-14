@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Rilis Fitur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .template {
+            display: none;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
+    <script>
+        function updateTemplate() {
+            const selectedType = document.getElementById("announcementType").value;
+            document.querySelectorAll(".template").forEach(template => {
+                template.style.display = "none";
+            });
+            const activeTemplate = document.getElementById(selectedType);
+            if (activeTemplate) {
+                activeTemplate.style.display = "block";
+            }
+        }
+
+        function generateOutput(event) {
+            event.preventDefault();
+
+            const selectedType = document.getElementById("announcementType").value;
+            let output = "";
+
+            if (selectedType === "featureRelease") {
+                const featureName = document.getElementById("featureName").value;
+                const featureDescription = document.getElementById("featureDescription").value;
+                output = `<h2>Rilis Fitur Baru</h2><p><strong>Nama Fitur:</strong> ${featureName}</p><p><strong>Deskripsi:</strong> ${featureDescription}</p>`;
+            } else if (selectedType === "issueFix") {
+                const issueType = document.getElementById("issueType").value;
+                const fixDescription = document.getElementById("fixDescription").value;
+                output = `<h2>Perbaikan Isu</h2><p><strong>Jenis Isu:</strong> ${issueType}</p><p><strong>Deskripsi Perbaikan:</strong> ${fixDescription}</p>`;
+            } else {
+                output = `<h2>Pengumuman</h2><p><strong>Jenis Issue:</strong> Tidak spesifik</p><p><strong>Deskripsi:</strong> Tidak ada deskripsi tambahan.</p>`;
+            }
+
+            const outputArea = document.getElementById("outputArea");
+            outputArea.innerHTML = output;
+        }
+
+        function copyToClipboard() {
+            const outputArea = document.getElementById("outputArea");
+            navigator.clipboard.writeText(outputArea.innerHTML).then(() => {
+                const successMessage = document.getElementById("successMessage");
+                successMessage.style.display = "block";
+                setTimeout(() => {
+                    successMessage.style.display = "none";
+                }, 3000);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Pengumuman Rilis Fitur</h1>
+        <form onsubmit="generateOutput(event)">
+            <label for="announcementType">Jenis Pengumuman:</label>
+            <select id="announcementType" onchange="updateTemplate()">
+                <option value="">-- Pilih Jenis Pengumuman --</option>
+                <option value="featureRelease">Rilis Fitur Baru</option>
+                <option value="issueFix">Perbaikan Isu</option>
+            </select>
+
+            <div id="featureRelease" class="template">
+                <h2>Rilis Fitur Baru</h2>
+                <label for="featureName">Nama Fitur:</label>
+                <input type="text" id="featureName" placeholder="Masukkan nama fitur">
+
+                <label for="featureDescription">Deskripsi Fitur:</label>
+                <textarea id="featureDescription" placeholder="Masukkan deskripsi fitur">
+                    <br>📢 [Pengumuman Rilis Fitur Baru]
+                    <br>
+                    <br>Kami dengan senang hati memperkenalkan fitur terbaru untuk meningkatkan pengalaman Anda:
+                    <br>
+                    <br>✨ **Nama Fitur:** [Nama Fitur]
+                    <br>📖 **Deskripsi:** [Deskripsi singkat fitur]
+                    <br>
+                    <br>Nikmati manfaat dari fitur baru ini mulai hari ini. Jangan ragu untuk mencoba dan memberikan masukan kepada kami!
+                    </textarea>
+            </div>
+
+            <div id="issueFix" class="template">
+                <h2>Perbaikan Isu</h2>
+                <label for="issueType">Jenis Isu:</label>
+                <input type="text" id="issueType" placeholder="Masukkan jenis isu">
+
+                <label for="fixDescription">Deskripsi Perbaikan:</label>
+                <textarea id="fixDescription" placeholder="Masukkan deskripsi perbaikan">
+                    <br>📢 [Pengumuman Perbaikan Isu]
+                    <br>
+                    <br>Kami sedang memperbaiki isu yang memengaruhi layanan kami:
+                    <br>
+                    <br>🛠️ **Jenis Isu:** [Jenis Isu]
+                    <br>📖 **Deskripsi Perbaikan:** [Penjelasan singkat perbaikan]
+                    <br>
+                    <br>Terima kasih atas kesabaran dan pengertian Anda selama kami bekerja untuk meningkatkan layanan.
+                    </textarea>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="output" id="outputArea"></div>
+        <button onclick="copyToClipboard()">Copy</button>
+        <p class="success-message" id="successMessage" style="display: none;">Berhasil di copy</p>
+    </div>
+</body>
+</html>
